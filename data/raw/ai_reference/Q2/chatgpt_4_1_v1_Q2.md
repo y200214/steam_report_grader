@@ -1,0 +1,3 @@
+Hoạt động: "Góc cảm xúc vui vẻ"
+
+Giáo viên chuẩn bị một “góc cảm xúc” trong lớp, nơi học sinh có thể đến viết hoặc vẽ về cảm xúc của mình vào mỗi buổi sáng. Sau đó, các em có thể chia sẻ (nếu muốn) với bạn bè hoặc giáo viên. Hoạt động này giúp học sinh nhận biết, quản lý cảm xúc cá nhân, tăng sự gắn kết giữa các thành viên trong lớp và tạo nên môi trường học tập thân thiện, cởi mở. Kỹ năng phát triển: nhận diện cảm xúc, giao tiếp, thấu hiểu và hợp tác.

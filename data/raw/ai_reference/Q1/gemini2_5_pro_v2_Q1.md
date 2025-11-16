@@ -1,0 +1,9 @@
+Theo bạn, 'học tập qua trải nghiệm' có nghĩa là gì? 1Hãy giải thích và mô tả tác động của nó đến học sinh, kèm theo ví dụ cụ thể. 2 (Khoảng 250 từ) 3
+
+"Học tập qua trải nghiệm" (Experiential Learning) là một triết lý giáo dục trong đó học sinh học hỏi thông qua việc chủ động tham gia vào các hoạt động thực tế, thay vì chỉ tiếp thu kiến thức một cách thụ động. 4 Đây là quá trình "học đi đôi với hành", nơi học sinh được trực tiếp tương tác, khám phá, giải quyết vấn đề và sau đó tự đúc kết, phản tư về những gì mình đã làm.
+
+Quá trình này thường bao gồm bốn bước: (1) **Tr****ả****i nghi****ệ****m c****ụ**** th****ể** (Tham gia hoạt động), (2) **Quan sát và ph****ả****n t****ư** (Nhìn lại những gì đã xảy ra), (3) **Khái quát hóa** (Hình thành quy luật, bài học), và (4) **Th****ử**** nghi****ệ****m tích c****ự****c** (Áp dụng bài học vào tình huống mới).
+
+Tác động của phương pháp này đến học sinh là vô cùng tích cực. 5 Nó giúp các em phát triển kỹ năng tư duy phản biện, kỹ năng giải quyết vấn đề, và khả năng làm việc nhóm. Quan trọng nhất, kiến thức được hình thành qua trải nghiệm sẽ được ghi nhớ sâu sắc và lâu dài hơn nhiều so với việc chỉ học lý thuyết. Các em cũng trở nên tự tin và chủ động hơn trong việc học.
+
+**Ví d****ụ**** c****ụ**** th****ể**** trong STEAM:** Thay vì chỉ đọc sách về năng lượng gió, học sinh được giao nhiệm vụ thiết kế và chế tạo một mô hình turbine gió nhỏ từ các vật liệu tái chế. Các em phải nghiên cứu về hình dạng cánh quạt (Khoa học), áp dụng nguyên lý khí động học (Công nghệ), thiết kế mô hình 3D (Kỹ thuật), tính toán tốc độ quay (Toán học) và trang trí sản phẩm (Nghệ thuật). Khi turbine quay và tạo ra điện (thắp sáng bóng đèn LED nhỏ), các em sẽ hiểu sâu sắc về cách năng lượng gió hoạt động, đồng thời học được cách đối mặt và vượt qua các thất bại trong quá trình thiết kế. 6

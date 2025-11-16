@@ -1,0 +1,5 @@
+"Học tập qua trải nghiệm" nghĩa là học sinh được tiếp xúc trực tiếp với các tình huống thực tế, qua đó rút ra kiến thức và kỹ năng cho bản thân. Thay vì chỉ tiếp thu kiến thức qua sách vở hay bài giảng, học sinh được “làm”, “trải nghiệm” và “phản ánh” những gì mình đã làm.
+
+Ví dụ, khi học về hệ sinh thái, học sinh có thể tham gia chuyến dã ngoại đến khu bảo tồn thiên nhiên, quan sát các loài sinh vật, và sau đó thảo luận về mối quan hệ giữa chúng. Qua đó, học sinh không chỉ nhớ kiến thức lâu hơn mà còn phát triển kỹ năng quan sát, làm việc nhóm và phản biện.
+
+Tác động lớn nhất của phương pháp này là giúp học sinh chủ động, sáng tạo và có trách nhiệm trong học tập. Các em hiểu bài sâu hơn, gắn kết bài học với cuộc sống thực, từ đó hình thành tư duy giải quyết vấn đề – yếu tố quan trọng trong thế kỷ 21.

@@ -1,0 +1,5 @@
+“Học tập qua trải nghiệm” là phương pháp trong đó học sinh lĩnh hội kiến thức thông qua việc **tr****ự****c ti****ế****p tham gia vào ho****ạ****t đ****ộ****ng**, quan sát kết quả, phản tư và rút ra bài học cho bản thân. Thay vì chỉ nghe giảng hoặc ghi nhớ thụ động, học sinh được “chạm tay vào vấn đề”, thử – sai – sửa, từ đó hình thành hiểu biết sâu sắc và bền vững hơn.
+
+Tác động của cách học này rất rõ rệt. Thứ nhất, nó giúp học sinh **hi****ể****u b****ả****n ch****ấ****t** của kiến thức, thay vì học thuộc lòng. Thứ hai, học sinh trở nên **t****ự**** tin**, chủ động đặt câu hỏi và khám phá. Thứ ba, năng lực giải quyết vấn đề được phát triển vì các em phải tự tìm giải pháp cho tình huống thực tế. Ngoài ra, học sinh cũng rèn được các kỹ năng mềm quan trọng như hợp tác, giao tiếp và sáng tạo.
+
+Ví dụ: khi học bài về sự nổi và chìm, thay vì giải thích lý thuyết, giáo viên cho học sinh thử thả các vật như đá, gỗ, miếng nhựa vào nước; sau đó yêu cầu các em ghi lại kết quả, giải thích và thiết kế một chiếc thuyền từ vật liệu đơn giản. Hoạt động này giúp học sinh ghi nhớ kiến thức lâu hơn và hiểu rõ cơ chế nổi – chìm thông qua thực nghiệm.

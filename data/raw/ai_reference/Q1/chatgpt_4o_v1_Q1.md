@@ -1,0 +1,3 @@
+"Học tập qua trải nghiệm" là phương pháp giáo dục trong đó học sinh tiếp thu kiến thức thông qua việc trực tiếp tham gia vào các hoạt động thực tế, thay vì chỉ học lý thuyết trên lớp. Phương pháp này giúp học sinh phát triển tư duy phản biện, kỹ năng giải quyết vấn đề và khả năng hợp tác.
+
+Ví dụ: Trong một dự án học liên môn STEAM, học sinh có thể được giao nhiệm vụ thiết kế và chế tạo một cây cầu bằng que gỗ. Qua đó, các em học được kiến thức vật lý (kết cấu, lực), kỹ năng toán học (đo lường, ước tính), cũng như kỹ năng giao tiếp và làm việc nhóm. Trải nghiệm thực tiễn giúp học sinh hiểu rõ bản chất kiến thức và ghi nhớ lâu hơn, đồng thời tạo động lực học tập mạnh mẽ.
