@@ -13,7 +13,9 @@ from .pipelines.peer_similarity_pipeline import run_peer_similarity
 from .pipelines.symbolic_features_pipeline import run_symbolic_features
 from .pipelines.ai_likeness_pipeline import run_ai_likeness
 from .pipelines.ai_report_pipeline import run_ai_report
-
+from .pipelines.final_report_pipeline import run_final_report
+from .utils.audit_logger import log_audit_record
+from .pipelines.translate_reports_pipeline import run_translate_reports
 
 def main():
     parser = argparse.ArgumentParser(
@@ -70,10 +72,24 @@ def main():
     )
     p_score.add_argument(
         "--model",
-        type=Path,
-        default="gpt-oss-20b",
-        help="Ollama で使うモデル名",
+        type=str,
+        default="gpt-oss:20b",
+        help="Ollama で使うモデル名（例: gpt-oss:20b）",
     )
+
+    p_score.add_argument(
+        "--workers",
+        type=int,
+        default=2,
+        help="並列で採点するワーカー数（ThreadPoolExecutor の max_workers）",
+    )
+    p_score.add_argument(
+        "--ollama-timeout",
+        type=int,
+        default=120,
+        help="Ollamaのタイムアウト秒数（秒）",
+    )
+
     p_ex = subparsers.add_parser("explain", help="採点理由を人が読みやすい形で出力する")
     p_ex.add_argument(
         "--scores-csv",
@@ -266,6 +282,7 @@ def main():
         default=Path("data/intermediate/features/peer_similarity_pairs.csv"),
         help="受験者ペアごとの類似度CSV",
     )
+
     p_peer.add_argument(
         "--log-path",
         type=Path,
@@ -408,6 +425,64 @@ def main():
         help="ログファイルのパス",
     )
 
+    # === final-report ===
+    p_final = subparsers.add_parser(
+        "final-report",
+        help="ranking.csv と feedback_{id}.md を生成する",
+    )
+    p_final.add_argument(
+        "--scores-csv",
+        type=Path,
+        default=Path("data/intermediate/features/absolute_scores.csv"),
+        help="絶対評価結果の CSV ファイル",
+    )
+    p_final.add_argument(
+        "--id-map",
+        type=Path,
+        default=Path("data/outputs/excel/steam_exam_id_map.xlsx"),
+        help="student_id と real_name の対応表 Excel",
+    )
+    p_final.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("data/outputs/final"),
+        help="ranking.csv / feedback_*.md を出力するディレクトリ",
+    )
+    p_final.add_argument(
+        "--log-path",
+        type=Path,
+        default=Path("logs/app.log"),
+        help="ログファイルのパス",
+    )
+
+    # === translate-reports ===
+    p_trans = subparsers.add_parser(
+        "translate-reports",
+        help="採点・AI疑惑レポートのテキストを日本語に翻訳する後処理",
+    )
+    p_trans.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("data/outputs/excel"),
+        help="score_explanations.xlsx や ai_*_report.xlsx が置いてあるディレクトリ",
+    )
+    p_trans.add_argument(
+        "--model",
+        type=str,
+        default="gpt-oss:20b",
+        help="翻訳に使うモデル名（Ollama のタグ）",
+    )
+    p_trans.add_argument(
+        "--log-path",
+        type=Path,
+        default=Path("logs/app.log"),
+        help="ログファイルのパス",
+    )
+    p_trans.add_argument(
+        "--inplace",
+        action="store_true",
+        help="元の Excel を上書きする（デフォルトは *_ja.xlsx を新規作成）",
+    )
 
     args = parser.parse_args()
 
@@ -417,6 +492,10 @@ def main():
             output_excel_dir=args.output_dir,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="preprocess",
+            args=vars(args),
+        )        
     elif args.command == "score":
         run_scoring(
             responses_excel_path=args.responses,
@@ -424,6 +503,20 @@ def main():
             output_path=args.output_csv,
             log_path=args.log_path,
             model_name=str(args.model),
+            max_workers=args.workers,
+            ollama_timeout=args.ollama_timeout,
+        )
+
+        log_audit_record(
+            command="score",
+            args=vars(args),
+            extra={
+                "llm": {
+                    "model": args.model,
+                    "temperature": 0.0,
+                    "seed": 42,
+                }
+            },
         )
     elif args.command == "summary":
         run_summary(
@@ -431,6 +524,10 @@ def main():
             id_map_excel=args.id_map,
             output_excel=args.output_excel,
             log_path=args.log_path,
+        )
+        log_audit_record(
+            command="summary",
+            args=vars(args),
         )
 
     elif args.command == "explain": 
@@ -440,6 +537,10 @@ def main():
             output_excel=args.output_excel,
             log_path=args.log_path,
         )    
+        log_audit_record(
+            command="explain",
+            args=vars(args),
+        )        
     elif args.command == "ai-similarity":
         run_ai_similarity(
             responses_excel=args.responses,
@@ -447,6 +548,10 @@ def main():
             output_csv=args.output_csv,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="ai-similarity",
+            args=vars(args),
+        )           
     elif args.command == "import-ai-ref":
         run_import_ai_ref(
             source_docx=args.source,
@@ -454,12 +559,20 @@ def main():
             ai_ref_base_dir=args.ai_ref_dir,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="import-ai-ref",
+            args=vars(args),
+        )            
     elif args.command == "import-all-ai-ref":
         run_import_all_ai_ref(
             source_dir=args.source_dir,
             ai_ref_base_dir=args.ai_ref_dir,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="import-all-ai-ref",
+            args=vars(args),
+        )            
     elif args.command == "ai-cluster":
         run_ai_cluster(
             responses_excel=args.responses,
@@ -468,6 +581,10 @@ def main():
             log_path=args.log_path,
             model_name=str(args.model),
         )
+        log_audit_record(
+            command="ai-cluster",
+            args=vars(args),
+        )            
     elif args.command == "peer-similarity":
         run_peer_similarity(
             responses_excel=args.responses,
@@ -475,12 +592,20 @@ def main():
             pair_output_csv=args.pair_output,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="peer-similarity",
+            args=vars(args),
+        )            
     elif args.command == "symbolic-features":
         run_symbolic_features(
             responses_excel=args.responses,
             output_csv=args.output_csv,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="symbolic-features",
+            args=vars(args),
+        )            
     elif args.command == "ai-likeness":
         run_ai_likeness(
             responses_excel=args.responses,
@@ -494,6 +619,17 @@ def main():
             mode=args.mode,
             targets_csv=args.targets_csv,
         )
+        log_audit_record(
+            command="ai-likeness",
+            args=vars(args),
+            extra={
+                "llm": {
+                    "model": args.model,
+                    "temperature": 0.0,
+                    "seed": 42,
+                }
+            },
+        )
     elif args.command == "ai-report":
         run_ai_report(
             responses_excel=args.responses,
@@ -504,7 +640,40 @@ def main():
             output_excel=args.output_excel,
             log_path=args.log_path,
         )
+        log_audit_record(
+            command="ai-report",
+            args=vars(args),
+        )            
+    elif args.command == "final-report":
+        run_final_report(
+            absolute_scores_csv=args.scores_csv,
+            id_map_excel=args.id_map,
+            ranking_csv_path=args.output_dir / "ranking.csv",
+            feedback_dir=args.output_dir / "feedback",
+            log_path=args.log_path,
+        )
+        log_audit_record(
+            command="final-report",
+            args=vars(args),
+        )
 
-
+    elif args.command == "translate-reports":
+        run_translate_reports(
+            output_dir=args.output_dir,
+            model_name=str(args.model),
+            log_path=args.log_path,
+            inplace=args.inplace,
+        )
+        log_audit_record(
+            command="translate-reports",
+            args=vars(args),
+            extra={
+                "llm": {
+                    "model": args.model,
+                    "temperature": 0.0,
+                    "seed": 42,
+                }
+            },
+        )
 if __name__ == "__main__":
     main()

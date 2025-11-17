@@ -2,8 +2,7 @@
 from __future__ import annotations
 import re
 from typing import Dict, Optional
-
-QUESTION_COUNT = 5
+from ..config import QUESTION_COUNT
 
 def _build_answer_pattern(qnum: int, next_qnum: Optional[int]) -> re.Pattern:
     """
@@ -54,6 +53,9 @@ def extract_answers(text: str) -> Dict[str, str]:
 
     for q in range(1, QUESTION_COUNT + 1):
         next_q = q + 1 if q < QUESTION_COUNT else None
+        pattern = _build_answer_pattern(q, next_q)
+        ...
+
 
         pattern = _build_answer_pattern(q, next_q)
         m = pattern.search(text)

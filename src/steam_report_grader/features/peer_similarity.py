@@ -8,11 +8,13 @@ import logging
 import pandas as pd
 
 from ..preprocess.text_cleaning import normalize_text
+from ..io.responses_loader import load_responses_and_questions
+from ..config import PEER_SIMILARITY_NGRAM
 
 logger = logging.getLogger(__name__)
 
 
-def _ngram_shingles(text: str, n: int = 3) -> set[str]:
+def _ngram_shingles(text: str, n: int) -> set[str]:
     text = text.replace("\n", " ")
     text = " ".join(text.split())
     if len(text) < n:
@@ -34,31 +36,34 @@ def _jaccard(a: set[str], b: set[str]) -> float:
 class PeerSimilarityRow:
     student_id: str
     question: str
-    sim_to_others_max: float
-    most_similar_student_id: str
-    sim_to_others_mean: float
+    peer_sim_max: float
+    peer_most_similar_id: str
+    peer_sim_mean: float
 
 
 def compute_peer_similarity_for_responses(
     responses_excel_path: Path,
-    n: int = 3,
+    n: int | None = None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
-    匿名回答Excelから、受験者同士の類似度特徴量を計算する。
+    匿名回答Excelから    匿名回答Excelから、受験者同士の類似度特徴量を計算する。
+    n を指定しなければ config.PEER_SIMILARITY_NGRAM を使う。、受験者同士の類似度特徴量を計算する。
 
     戻り値:
-      per_student_df:
+    per_student_df:
         student_id, question, sim_to_others_max,
         most_similar_student_id, sim_to_others_mean
       pair_df:
         question, student_id_a, student_id_b, similarity
     """
+    if n is None:
+        n = PEER_SIMILARITY_NGRAM
+
     responses_excel_path = Path(responses_excel_path)
-    df = pd.read_excel(responses_excel_path, sheet_name="responses")
+    df, questions = load_responses_and_questions(responses_excel_path)
+    
     logger.info("Loaded responses for peer similarity: %d rows", len(df))
 
-    questions = [c for c in df.columns if c.startswith("Q")]
-    questions = sorted(questions, key=lambda x: int(x[1:]))
 
     per_student_rows: List[Dict] = []
     pair_rows: List[Dict] = []
@@ -111,9 +116,9 @@ def compute_peer_similarity_for_responses(
                     {
                         "student_id": sid_i,
                         "question": q,
-                        "sim_to_others_max": 0.0,
-                        "most_similar_student_id": "",
-                        "sim_to_others_mean": 0.0,
+                        "sim_to_others_max": 0.0,          
+                        "most_similar_student_id": "",     
+                        "sim_to_others_mean": 0.0,         
                     }
                 )
                 continue
@@ -125,9 +130,9 @@ def compute_peer_similarity_for_responses(
                 {
                     "student_id": sid_i,
                     "question": q,
-                    "sim_to_others_max": sim_max,
-                    "most_similar_student_id": sid_best,
-                    "sim_to_others_mean": sim_mean,
+                    "sim_to_others_max": sim_max,         
+                    "most_similar_student_id": sid_best,  
+                    "sim_to_others_mean": sim_mean,       
                 }
             )
 

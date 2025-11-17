@@ -5,6 +5,7 @@ from typing import Tuple
 import logging
 
 import pandas as pd
+from ..io.responses_loader import load_responses_excel, detect_question_columns
 
 logger = logging.getLogger(__name__)
 
@@ -20,13 +21,14 @@ def load_full_features(
     各種特徴量を student_id x question 単位でマージする。
 
     - responses: student_id, Q1〜Q5（テキスト）
-    - ai_similarity: student_id, question, sim_to_ai_max, sim_to_ai_mean, ...
-    - peer_similarity: student_id, question, sim_to_others_max, most_similar_student_id, ...
-    - symbolic_features: student_id, question, symbolic_ai_score
+    - ai_similarity: student_id, question, ai_ref_sim_max, ai_ref_sim_mean, ai_ref_best_id
+    - peer_similarity: student_id, question, sim_to_others_max,most_similar_student_id, sim_to_others_mean
+    - symbolic_features: student_id, question, symbolic_ai_score, answer_text
     - ai_likeness: student_id, question, ai_likeness_score, ai_likeness_comment
 
+
     戻り値:
-      full_df: student_id, question, answer, 各種特徴量…
+      full_df: student_id, question, answer_text, 各種特徴量…
     """
     responses_excel = Path(responses_excel)
     ai_similarity_csv = Path(ai_similarity_csv)
@@ -35,15 +37,16 @@ def load_full_features(
     ai_likeness_csv = Path(ai_likeness_csv) if ai_likeness_csv else None
 
     # 回答
-    resp_df = pd.read_excel(responses_excel, sheet_name="responses")
-    # 縦持ちに変換: student_id, question, answer
-    q_cols = [c for c in resp_df.columns if c.startswith("Q")]
+    resp_df = load_responses_excel(responses_excel)
+    # 縦持ちに変換: student_id, question, answer_text
+    q_cols = detect_question_columns(resp_df)
     resp_long = resp_df.melt(
         id_vars=["student_id"],
         value_vars=q_cols,
         var_name="question",
-        value_name="answer",
+        value_name="answer_text",
     )
+
     resp_long["student_id"] = resp_long["student_id"].astype(str)
     resp_long["question"] = resp_long["question"].astype(str)
 
@@ -58,6 +61,7 @@ def load_full_features(
         raise ValueError("peer_similarity_csv は per_student の方を指定してください。")
     peer_df["student_id"] = peer_df["student_id"].astype(str)
     peer_df["question"] = peer_df["question"].astype(str)
+
 
     sym_df = pd.read_csv(symbolic_features_csv)
     sym_df["student_id"] = sym_df["student_id"].astype(str)
@@ -76,15 +80,14 @@ def load_full_features(
     full = full.merge(sym_df, on=["student_id", "question"], how="left")
     full = full.merge(like_df, on=["student_id", "question"], how="left")
 
-    # 見やすい順に並べ替え
     ordered_cols = [
         "student_id",
         "question",
-        "answer",
+        "answer_text",
         # AI模範
         "sim_to_ai_max",
         "sim_to_ai_mean",
-        "best_ref_id",
+        "ai_ref_best_id",
         # peer
         "sim_to_others_max",
         "most_similar_student_id",
@@ -95,6 +98,7 @@ def load_full_features(
         "ai_likeness_score",
         "ai_likeness_comment",
     ]
+
     # 存在する列だけにする
     existing_cols = [c for c in ordered_cols if c in full.columns]
     rest_cols = [c for c in full.columns if c not in existing_cols]

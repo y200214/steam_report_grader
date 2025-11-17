@@ -2,6 +2,16 @@
 import re
 from typing import List
 import numpy as np
+from ..config import (
+    SYMB_WEIGHT_BOLD,
+    SYMB_WEIGHT_HEADING,
+    SYMB_WEIGHT_LINE,
+    SYMB_WEIGHT_BULLET,
+    SYMB_WEIGHT_CONNECTIVE,
+    SYMB_WEIGHT_SENT_LEN,
+    SYMB_SENT_LEN_SCALE,
+    SYMB_MAX_SCORE,
+)
 
 # 太字頻度（**...**）
 def count_bold(text: str) -> int:
@@ -43,13 +53,12 @@ def calculate_symbolic_features(text: str) -> float:
 
     # 評価基準を調整してスコア化
     score = (
-        bold_count * 0.3
-        + heading_count * 0.2
-        + line_count * 0.1
-        + bullet_count * 0.1
-        + connective_count * 0.2
-        + (avg_sentence_length / 10) * 0.1  # 文長が安定してるとAIっぽい
+        bold_count * SYMB_WEIGHT_BOLD
+        + heading_count * SYMB_WEIGHT_HEADING
+        + line_count * SYMB_WEIGHT_LINE
+        + bullet_count * SYMB_WEIGHT_BULLET
+        + connective_count * SYMB_WEIGHT_CONNECTIVE
+        + (avg_sentence_length / SYMB_SENT_LEN_SCALE) * SYMB_WEIGHT_SENT_LEN
     )
-    
-    # 最大スコアは1.0に調整
-    return min(score, 1.0)
+
+    return min(score, SYMB_MAX_SCORE)

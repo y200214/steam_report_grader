@@ -11,7 +11,16 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 
 from ..preprocess.text_cleaning import normalize_text
-
+from ..config import (
+    CLUSTER_STUDENTS_1,
+    CLUSTER_STUDENTS_2,
+    CLUSTER_STUDENTS_3,
+    CLUSTER_DEFAULT_N_CLUSTERS,
+    CLUSTER_CHAR_NGRAM_MIN,
+    CLUSTER_CHAR_NGRAM_MAX,
+    CLUSTER_KMEANS_N_INIT,
+    CLUSTER_KMEANS_RANDOM_STATE,
+)
 logger = logging.getLogger(__name__)
 
 
@@ -25,19 +34,15 @@ class ClusterResult:
 def _decide_n_clusters(n_students: int) -> int:
     """
     学生数からクラスタ数をざっくり決める。
-    雑だけど実用的なルール：
-      〜4人: 1クラスタ
-      〜10人: 2クラスタ
-      〜20人: 3クラスタ
-      21人〜: 4クラスタ
+    閾値は config.py で変更可能。
     """
-    if n_students <= 4:
+    if n_students <= CLUSTER_STUDENTS_1:
         return 1
-    if n_students <= 10:
+    if n_students <= CLUSTER_STUDENTS_2:
         return 2
-    if n_students <= 20:
+    if n_students <= CLUSTER_STUDENTS_3:
         return 3
-    return 4
+    return CLUSTER_DEFAULT_N_CLUSTERS
 
 
 def cluster_answers_for_question(
@@ -78,16 +83,16 @@ def cluster_answers_for_question(
 
     # 文字 n-gram ベースの TF-IDF
     vectorizer = TfidfVectorizer(
-        analyzer="char",
-        ngram_range=(3, 5),
-        min_df=1,
+    analyzer="char",
+    ngram_range=(CLUSTER_CHAR_NGRAM_MIN, CLUSTER_CHAR_NGRAM_MAX),
+    min_df=1,
     )
     X = vectorizer.fit_transform(texts)
 
     model = KMeans(
         n_clusters=n_clusters,
-        n_init=10,
-        random_state=42,
+        n_init=CLUSTER_KMEANS_N_INIT,
+        random_state=CLUSTER_KMEANS_RANDOM_STATE,
     )
     labels = model.fit_predict(X)
 

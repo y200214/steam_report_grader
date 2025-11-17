@@ -114,6 +114,7 @@ def write_score_explanations_excel(
         brief_df.to_excel(writer, index=False, sheet_name="brief")
         detailed_df.to_excel(writer, index=False, sheet_name="detailed")
 
+
 def write_ai_likeness_report_excel(
     path: Path,
     likeness_df: pd.DataFrame,

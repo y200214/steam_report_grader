@@ -10,11 +10,13 @@ import pandas as pd
 
 from .ai_reference import load_ai_references, AIReferenceAnswer
 from ..preprocess.text_cleaning import normalize_text  # 既存の前処理を流用
+from ..io.responses_loader import load_responses_and_questions
+from ..config import AI_SIMILARITY_NGRAM
 
 logger = logging.getLogger(__name__)
 
 
-def _ngram_shingles(text: str, n: int = 3) -> set[str]:
+def _ngram_shingles(text: str, n: int) -> set[str]:
     text = text.replace("\n", " ")
     text = " ".join(text.split())  # 連続スペースを1つに
     if len(text) < n:
@@ -36,39 +38,45 @@ def _jaccard(a: set[str], b: set[str]) -> float:
 class AISimilarity:
     student_id: str
     question: str
-    sim_to_ai_max: float
-    sim_to_ai_mean: float
-    best_ref_id: Optional[str]
+    ai_ref_sim_max: float
+    ai_ref_sim_mean: float
+    ai_ref_best_id: Optional[str]
 
 
 def compute_similarity_to_ai(
     answer_text: str,
-    ai_refs: List[AIReferenceAnswer],
-    n: int = 3,
-) -> Tuple[float, float, Optional[str]]:
-    """
-    1つの受験者回答に対して、AI模範解答群との類似度を計算する。
-    """
+    ai_refs: list[AIReferenceAnswer],
+    n: int | None = None,
+) -> tuple[float, float, str | None]:
+    if n is None:
+        n = AI_SIMILARITY_NGRAM
+
+    # ★AI参照が0件ならここで 0 扱いにして返す
+    if not ai_refs:
+        logger.warning(
+            "compute_similarity_to_ai called with no AI references; "
+            "returning 0.0 similarity."
+        )
+        return 0.0, 0.0, None
+
     norm_ans = normalize_text(answer_text)
     ans_shingles = _ngram_shingles(norm_ans, n=n)
 
-    if not ai_refs:
-        return 0.0, 0.0, None
-
-    sims: List[Tuple[AIReferenceAnswer, float]] = []
+    sims: list[tuple[AIReferenceAnswer, float]] = []
     for ref in ai_refs:
         ref_norm = normalize_text(ref.text)
         ref_shingles = _ngram_shingles(ref_norm, n=n)
         sim = _jaccard(ans_shingles, ref_shingles)
         sims.append((ref, sim))
 
+    if not sims:
+        return 0.0, 0.0, None
+
     sims_values = [s for _, s in sims]
     sim_max = max(sims_values)
     sim_mean = sum(sims_values) / len(sims_values)
 
-    # 一番似ている模範解答
     best_ref, _ = max(sims, key=lambda t: t[1])
-
     return sim_max, sim_mean, best_ref.ref_id
 
 
@@ -84,20 +92,14 @@ def compute_ai_similarity_for_responses(
     戻り値のカラム:
       - student_id
       - question
-      - sim_to_ai_max
-      - sim_to_ai_mean
-      - best_ref_id
+      - ai_ref_sim_max
+      - ai_ref_sim_mean
+      - ai_ref_best_id
     """
     responses_excel_path = Path(responses_excel_path)
     ai_reference_dir = Path(ai_reference_dir)
 
-    df = pd.read_excel(responses_excel_path, sheet_name="responses")
-    logger.info("Loaded responses: %d rows", len(df))
-
-    # Q列を検出
-    questions = [c for c in df.columns if c.startswith("Q")]
-    questions = sorted(questions, key=lambda x: int(x[1:]))
-    logger.info("Detected questions: %s", questions)
+    df, questions = load_responses_and_questions(responses_excel_path)
 
     refs_by_q: Dict[str, List[AIReferenceAnswer]] = load_ai_references(
         ai_reference_dir, questions
@@ -112,7 +114,7 @@ def compute_ai_similarity_for_responses(
                 continue
 
             ai_refs = refs_by_q.get(q, [])
-            sim_max, sim_mean, best_ref_id = compute_similarity_to_ai(ans, ai_refs)
+            sim_max, sim_mean, ai_ref_best_id = compute_similarity_to_ai(ans, ai_refs)
 
             rows.append(
                 {
@@ -120,9 +122,10 @@ def compute_ai_similarity_for_responses(
                     "question": q,
                     "sim_to_ai_max": sim_max,
                     "sim_to_ai_mean": sim_mean,
-                    "best_ref_id": best_ref_id or "",
+                    "ai_ref_best_id": ai_ref_best_id or "",
                 }
             )
+
 
     result_df = pd.DataFrame(rows)
     return result_df

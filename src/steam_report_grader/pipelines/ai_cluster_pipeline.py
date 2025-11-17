@@ -10,6 +10,7 @@ from ..utils.logging_utils import setup_logging
 from ..features.text_clustering import cluster_answers_for_question
 from ..features.ai_cluster_eval import analyze_clusters_with_llm
 from ..io.excel_writer import write_ai_cluster_report_excel
+from ..io.responses_loader import load_responses_and_questions
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +33,8 @@ def run_ai_cluster(
     output_excel = Path(output_excel)
     rubric_dir = Path(rubric_dir) if rubric_dir is not None else None
 
-    df = pd.read_excel(responses_excel, sheet_name="responses")
-    logger.info("Loaded responses: %d rows", len(df))
+    df, questions = load_responses_and_questions(responses_excel)
 
-    questions = [c for c in df.columns if c.startswith("Q")]
-    questions = sorted(questions, key=lambda x: int(x[1:]))
 
     cluster_rows: List[Dict] = []
 

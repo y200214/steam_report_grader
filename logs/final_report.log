@@ -1,0 +1,136 @@
+[2025-11-16 16:18:10] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-16 16:18:10] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-16 16:18:10] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown for 2 students
+[2025-11-16 16:18:10] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\feedback_S001.md
+[2025-11-16 16:18:10] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\feedback_S002.md
+[2025-11-16 16:18:10] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\feedback_S001.md
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\feedback_S001.docx
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\feedback_S002.md
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\feedback_S002.docx
+[2025-11-17 01:06:18] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\feedback_S002.md
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\feedback_S002.docx
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\feedback_S001.md
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\feedback_S001.docx
+[2025-11-17 01:25:41] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 01:50:06] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 01:50:06] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 01:55:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 01:55:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\feedback_S002.md
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\feedback_S002.docx
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\feedback_S001.md
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\feedback_S001.docx
+[2025-11-17 01:57:46] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 02:02:05] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 02:02:06] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 02:02:06] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 02:16:47] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 02:38:39] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 04:08:26] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 05:06:38] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 05:53:25] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 10:48:44] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 12:01:22] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 12:01:22] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 12:01:22] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 12:01:22] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 12:11:15] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 12:11:16] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 12:11:16] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 12:11:16] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 12:11:16] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Start final report pipeline
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote ranking.csv to data\outputs\final\ranking.csv
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Loaded AI likeness features from data\intermediate\features\ai_likeness.csv (rows=10)
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Merged AI likeness aggregates into final_df (cols added: ['ai_likeness_mean', 'ai_likeness_max', 'ai_suspect_flag'])
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote final_report.xlsx to data\outputs\final\final_report.xlsx
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Generating feedback markdown/docx for 2 students
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S001 to data\outputs\final\feedback\md\feedback_S001.md
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S001 to data\outputs\final\feedback\docx\feedback_S001.docx
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback markdown for S002 to data\outputs\final\feedback\md\feedback_S002.md
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Wrote feedback docx for S002 to data\outputs\final\feedback\docx\feedback_S002.docx
+[2025-11-17 12:13:40] [INFO] src.steam_report_grader.pipelines.final_report_pipeline - Final report pipeline completed.

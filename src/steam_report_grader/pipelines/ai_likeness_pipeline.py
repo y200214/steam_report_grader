@@ -8,6 +8,7 @@ from ..features.ai_likeness_evaluator import AILikenessEvaluator
 from ..llm.ollama_client import OllamaClient, OllamaConfig
 from ..io.excel_writer import write_ai_likeness_report_excel
 import pandas as pd
+from ..io.responses_loader import load_responses_excel
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,8 @@ def run_ai_likeness(
     ai_similarity_df = pd.read_csv(ai_similarity_csv)
     peer_similarity_df = pd.read_csv(peer_similarity_csv)
     symbolic_features_df = pd.read_csv(symbolic_features_csv)
-    responses_df = pd.read_excel(responses_excel, sheet_name="responses")
+    responses_df = load_responses_excel(responses_excel)
+
 
     # 型合わせ（student_id を str に寄せる）
     for df in (ai_similarity_df, peer_similarity_df, symbolic_features_df, responses_df):

@@ -6,6 +6,7 @@ import logging
 from ..utils.logging_utils import setup_logging
 from ..features.symbolic_features import calculate_symbolic_features
 import pandas as pd
+from ..io.responses_loader import load_responses_and_questions
 
 logger = logging.getLogger(__name__)
 
@@ -24,31 +25,33 @@ def run_symbolic_features(
 
     responses_excel = Path(responses_excel)
     output_csv = Path(output_csv)
-    responses_df = pd.read_excel(responses_excel, sheet_name="responses")
-    logger.info("Loaded responses for symbolic feature extraction: %d rows", len(responses_df))
+
+    responses_df, questions = load_responses_and_questions(responses_excel)
+    logger.info(
+        "Loaded responses for symbolic feature extraction: %d rows",
+        len(responses_df),
+    )
 
     result_rows = []
 
-    # Q1〜Q5を順に処理
-    questions = [col for col in responses_df.columns if col.startswith("Q")]
 
     for _, row in responses_df.iterrows():
         student_id = str(row["student_id"])
 
         for q in questions:
-            answer = str(row.get(q, "") or "").strip()
+            answer_text = str(row.get(q, "") or "").strip()
 
-            if not answer:
+            if not answer_text:
                 continue
 
-            symbolic_score = calculate_symbolic_features(answer)
+            symbolic_score = calculate_symbolic_features(answer_text)
 
             result_rows.append(
                 {
                     "student_id": student_id,
                     "question": q,
                     "symbolic_ai_score": symbolic_score,
-                    "answer": answer,
+                    "answer_text": answer_text,
                 }
             )
 
