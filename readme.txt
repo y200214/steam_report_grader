@@ -21,7 +21,7 @@ python -m src.steam_report_grader.cli ai-likeness --model gpt-oss:20b
 総合レポート
 python -m src.steam_report_grader.cli ai-report
 
-最終総合レポートしゅつりょく
+最終総合レポート出力
 python -m src.steam_report_grader.cli final-report --scores-csv data/intermediate/features/absolute_scores.csv --id-map data/outputs/excel/steam_exam_id_map.xlsx --output-dir data/outputs/final --log-path logs/final_report.log
 
 

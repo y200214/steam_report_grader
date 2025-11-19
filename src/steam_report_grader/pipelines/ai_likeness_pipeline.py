@@ -5,11 +5,12 @@ import logging
 
 from ..utils.logging_utils import setup_logging
 from ..features.ai_likeness_evaluator import AILikenessEvaluator
-from ..llm.ollama_client import OllamaClient, OllamaConfig
+from ..llm.ollama_pool import get_ollama_client
+
 from ..io.excel_writer import write_ai_likeness_report_excel
 import pandas as pd
 from ..io.responses_loader import load_responses_excel
-
+from ..config import DEFAULT_LIKENESS_MODEL, LLM_LIKENESS_TIMEOUT
 logger = logging.getLogger(__name__)
 
 def run_ai_likeness(
@@ -19,13 +20,14 @@ def run_ai_likeness(
     symbolic_features_csv: Path,
     output_excel: Path,
     log_path: Path,
-    model_name: str = "gpt-oss-20b",
-
-    # ★ ここから追加引数（CLIと合わせる）
+    model_name: str = DEFAULT_LIKENESS_MODEL,
+    llm_provider: str = "ollama",        # ★ 追加
     likeness_csv: Path | None = None,
     mode: str = "all",
     targets_csv: Path | None = None,
 ) -> None:
+
+
     """
     AI模範解答との類似度、受験者同士の類似度、記号的特徴量を基に、
     最終的なAI疑惑スコア（ai_likeness_score）を計算し、レポートを出力する。
@@ -41,7 +43,7 @@ def run_ai_likeness(
     peer_similarity_csv = Path(peer_similarity_csv)
     symbolic_features_csv = Path(symbolic_features_csv)
     output_excel = Path(output_excel)
-    # ★ likeness_csv が指定されていなければデフォルトパスを使う
+    # likeness_csv が指定されていなければデフォルトパスを使う
     likeness_csv = Path(likeness_csv) if likeness_csv else Path("data/intermediate/features/ai_likeness.csv")
 
     # データの読み込み
@@ -62,10 +64,21 @@ def run_ai_likeness(
         peer_similarity_df["question"] = peer_similarity_df["question"].astype(str)
     if "question" in symbolic_features_df.columns:
         symbolic_features_df["question"] = symbolic_features_df["question"].astype(str)
-
-    # LLM クライアントの準備
-    client = OllamaClient(OllamaConfig(model=model_name))
+    # 進捗管理用カウンタ
+    questions = list(ai_similarity_df["question"].unique())
+    students = responses_df["student_id"].astype(str).unique()
+    total = len(students) * len(questions)
+    done = 0
+    # LLM クライアントの準備（2GPU対応プール）
+    client = get_ollama_client()
+    logger.info(
+        "Using AI-likeness LLM via 2-GPU pool (model=%s, timeout=%s)",
+        model_name,
+        LLM_LIKENESS_TIMEOUT,
+    )
     evaluator = AILikenessEvaluator(client)
+
+
 
     results = []
 
@@ -116,7 +129,7 @@ def run_ai_likeness(
     # 結果をDataFrameに
     results_df = pd.DataFrame(results)
 
-    # ★ 中間CSVとして保存（ai-report が読む用）
+    # 中間CSVとして保存（ai-report が読む用）
     likeness_csv.parent.mkdir(parents=True, exist_ok=True)
     results_df.to_csv(likeness_csv, index=False, encoding="utf-8-sig")
     logger.info("Wrote AI likeness features to %s", likeness_csv)

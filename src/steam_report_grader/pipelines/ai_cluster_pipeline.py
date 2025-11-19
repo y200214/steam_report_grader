@@ -11,7 +11,7 @@ from ..features.text_clustering import cluster_answers_for_question
 from ..features.ai_cluster_eval import analyze_clusters_with_llm
 from ..io.excel_writer import write_ai_cluster_report_excel
 from ..io.responses_loader import load_responses_and_questions
-
+from ..config import DEFAULT_CLUSTER_MODEL
 logger = logging.getLogger(__name__)
 
 
@@ -20,9 +20,11 @@ def run_ai_cluster(
     rubric_dir: Path | None,
     output_excel: Path,
     log_path: Path,
-    model_name: str = "gpt-oss-20b",
+    model_name: str = DEFAULT_CLUSTER_MODEL,
+    llm_provider: str = "ollama",
 ) -> None:
-    """
+
+    """   
     匿名回答Excelから、設問ごとにクラスタリングを行い、
     各クラスタの「AIテンプレ度」を評価してレポートを出力する。
     """
@@ -34,7 +36,6 @@ def run_ai_cluster(
     rubric_dir = Path(rubric_dir) if rubric_dir is not None else None
 
     df, questions = load_responses_and_questions(responses_excel)
-
 
     cluster_rows: List[Dict] = []
 
@@ -64,6 +65,7 @@ def run_ai_cluster(
         cluster_df=cluster_df,
         rubric_dir=str(rubric_dir) if rubric_dir else None,
         model_name=model_name,
+        llm_provider=llm_provider,
     )
 
     if not analyses:

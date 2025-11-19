@@ -8,6 +8,8 @@ GUI からいじるための「数値パラメータ置き場」。
 - クラスタリングのしきい値・パラメータ
 - 記号的特徴の重み
 - AI疑惑フラグにする閾値
+- 各パイプラインの LLM 設定
+- Ollama の共通設定
 
 などをここに集約しておく。
 """
@@ -49,7 +51,7 @@ CLUSTER_CHAR_NGRAM_MAX: int = 5
 
 # KMeans のパラメータ
 # n_init: 初期値を変えて何回試すか（多いほど安定するが重い）
-# random_state: ランダムシード（同じ値なら結果が再現しやすい）
+# random_state: ランダムセード（同じ値なら結果が再現しやすい）
 CLUSTER_KMEANS_N_INIT: int = 10
 CLUSTER_KMEANS_RANDOM_STATE: int = 42
 
@@ -84,3 +86,80 @@ SYMB_MAX_SCORE: float = 1.0
 # -------------------------
 # ai_likeness_max がこの値以上なら「AIっぽい」とフラグを立てる
 AI_SUSPECT_THRESHOLD: float = 0.7
+
+
+# -------------------------
+# LLM / パイプラインごとの設定
+# -------------------------
+# score / ai-likeness / ai-cluster / translate-reports で共通利用するパラメータ
+
+# 絶対評価（score パイプライン）の LLM 設定
+LLM_SCORING_TIMEOUT: float = 120.0
+# 採点で 1 回の LLM 呼び出しに許す最大トークン数
+LLM_SCORING_MAX_TOKENS: int = 8192
+
+# AI Likeness 評価（ai-likeness パイプライン）の LLM 設定
+LLM_LIKENESS_TIMEOUT: float = 120.0
+LLM_LIKENESS_MAX_TOKENS: int = 8192
+
+# クラスタ評価（ai-cluster パイプライン）の LLM 設定
+LLM_CLUSTER_TIMEOUT: float = 180.0
+LLM_CLUSTER_MAX_TOKENS: int = 8192
+
+# 翻訳パイプライン（translate-reports）の LLM 設定
+LLM_TRANSLATION_TIMEOUT: float = 300.0
+LLM_TRANSLATION_MAX_TOKENS: int = 8192
+
+# 絶対評価の並列ワーカー数（score パイプライン）
+SCORING_MAX_WORKERS: int = 4
+
+
+# -------------------------
+# LLM / モデル・Ollama 共通設定
+# -------------------------
+
+# モデル名デフォルト
+DEFAULT_SCORING_MODEL: str = "gpt-oss:20b"
+DEFAULT_LIKENESS_MODEL: str = "gpt-oss:20b"
+DEFAULT_CLUSTER_MODEL: str = "gpt-oss:20b"
+DEFAULT_TRANSLATION_MODEL: str = "gpt-oss:20b"
+
+# Ollama 接続のデフォルト
+OLLAMA_DEFAULT_BASE_URL: str = "http://127.0.0.1:11434"
+OLLAMA_DEFAULT_MODEL: str = DEFAULT_SCORING_MODEL  # ベースのデフォルトモデル
+OLLAMA_DEFAULT_TIMEOUT: int = 120
+OLLAMA_DEFAULT_MAX_RETRIES: int = 3
+OLLAMA_DEFAULT_RETRY_DELAY: float = 2.0  # seconds
+OLLAMA_DEFAULT_TEMPERATURE: float = 0.0
+OLLAMA_DEFAULT_TOP_P: float = 1.0
+OLLAMA_DEFAULT_SEED: int | None = 42
+
+# 役割ごとの LLM 設定
+LLM_PROFILES = {
+    "scoring": {
+        "provider": "ollama",
+        "model": DEFAULT_SCORING_MODEL,
+        "base_url": OLLAMA_DEFAULT_BASE_URL,
+    },
+    "translation": {
+        "provider": "ollama",
+        "model": DEFAULT_TRANSLATION_MODEL,
+        "base_url": OLLAMA_DEFAULT_BASE_URL,
+    },
+    "likeness": {
+        "provider": "ollama",
+        "model": DEFAULT_LIKENESS_MODEL,
+        "base_url": OLLAMA_DEFAULT_BASE_URL,
+    },
+    "cluster": {
+        "provider": "ollama",
+        "model": DEFAULT_CLUSTER_MODEL,
+        "base_url": OLLAMA_DEFAULT_BASE_URL,
+    },
+}
+
+# 複数 Ollama インスタンス（GPU0/1 用）
+OLLAMA_BASE_URLS = [
+    "http://127.0.0.1:11434",  # GPU0
+    "http://127.0.0.1:11435",  # GPU1
+]

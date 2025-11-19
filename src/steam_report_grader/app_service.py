@@ -9,7 +9,7 @@ from typing import Sequence
 
 logger = logging.getLogger(__name__)
 
-
+from .config import DEFAULT_SCORING_MODEL
 @dataclass
 class FullPipelineResult:
     """
@@ -51,7 +51,7 @@ def _run_cli(
 
 def run_full_pipeline(
     project_root: Path,
-    model_name: str = "gpt-oss:20b",
+    model_name: str = DEFAULT_SCORING_MODEL,
 ) -> FullPipelineResult:
     """
     GUI から呼ぶ用の「全部入り」パイプライン。

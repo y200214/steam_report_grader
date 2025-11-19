@@ -6,16 +6,24 @@ import logging
 from typing import List, Dict, Any
 from dataclasses import dataclass
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
 
 from ..utils.logging_utils import setup_logging
-from ..llm.ollama_client import OllamaClient, OllamaConfig
 from ..grading.rubric import load_all_rubrics
 from ..grading.absolute_scorer import AbsoluteScorer, ScoreResult
 from ..io.responses_loader import load_responses_and_questions
-from concurrent.futures import ThreadPoolExecutor, as_completed
-# from ..llm.factory import create_default_scorer  # ← 使わないならコメントアウト or 削除
+from ..config import (
+    DEFAULT_SCORING_MODEL,
+    LLM_SCORING_TIMEOUT,
+    SCORING_MAX_WORKERS,
+    OLLAMA_DEFAULT_MODEL,
+    OLLAMA_DEFAULT_TEMPERATURE,
+    OLLAMA_DEFAULT_SEED,
+)
+
+from ..llm.ollama_pool import get_ollama_client
 
 logger = logging.getLogger(__name__)
 
@@ -40,17 +48,24 @@ def run_scoring(
     rubric_dir: Path,
     output_path: Path,
     log_path: Path,
-    model_name: str = "gpt-oss:20b",  # ← Ollama 側と揃える
-    max_workers: int = 2,
-    ollama_timeout: int | None = None,
+    model_name: str = DEFAULT_SCORING_MODEL,
+    llm_provider: str = "ollama",
+    max_workers: int = SCORING_MAX_WORKERS,
+    ollama_timeout: int | None = int(LLM_SCORING_TIMEOUT),
 ) -> None:
-
     """
-    匿名化された回答 Excel を読み込み、Q1〜Q5 を絶対評価。
+    匿名化された回答 Excel を読み込み、Q1〜Q? を絶対評価。
     結果を CSV で保存する。
     """
     setup_logging(log_path)
     logger.info("Start scoring pipeline")
+    logger.info(
+        "Scoring config: model=%s provider=%s timeout=%s max_workers=%s",
+        model_name,
+        llm_provider,
+        ollama_timeout,
+        max_workers,
+    )
 
     responses_excel_path = Path(responses_excel_path)
     rubric_dir = Path(rubric_dir)
@@ -60,22 +75,16 @@ def run_scoring(
     df, questions = load_responses_and_questions(responses_excel_path)
     rubrics = load_all_rubrics(rubric_dir, questions)
 
-    # scorer の生成（温度0・seed固定などは OllamaConfig のデフォルトで統一）
-    config = OllamaConfig(model=model_name)
-    if ollama_timeout is not None:
-        config.timeout = ollama_timeout
-
-    client = OllamaClient(config)
-    scorer = AbsoluteScorer(client)
-
-
-    cfg = client.config
+    # --- LLM クライアント & scorer の生成（2GPU 対応プール） ---
+    client = get_ollama_client()
     logger.info(
-        "Using model=%s, temperature=%.2f, seed=%s",
-        cfg.model,
-        cfg.temperature,
-        cfg.seed,
+        "Using scoring LLM via 2-GPU pool (base_model=%s, temperature=%.2f, seed=%s, timeout=%s)",
+        OLLAMA_DEFAULT_MODEL,
+        OLLAMA_DEFAULT_TEMPERATURE,
+        OLLAMA_DEFAULT_SEED,
+        LLM_SCORING_TIMEOUT,
     )
+    scorer = AbsoluteScorer(client)
 
     results: List[ScoreResult] = []
 
@@ -100,12 +109,15 @@ def run_scoring(
                 )
             )
 
-    logger.info("Total scoring tasks: %d", len(tasks))
+    total_tasks = len(tasks)
+    if total_tasks == 0:
+        logger.warning("No scoring tasks generated. Check input.")
+        return
+
+    logger.info("Total scoring tasks: %d", total_tasks)
     logger.info("Using %d workers", max_workers)
 
     # --- 並列で採点 ---
-    max_workers = 2  # 必要に応じて設定化
-
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_task = {
             executor.submit(_score_one_task, scorer, task): task
@@ -117,7 +129,7 @@ def run_scoring(
             try:
                 res = future.result()
                 results.append(res)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 logger.exception(
                     "Failed to score %s %s: %s",
                     task.student_id,
@@ -125,9 +137,22 @@ def run_scoring(
                     e,
                 )
 
-            if i % 10 == 0:
-                logger.info("Scored %d / %d tasks", i, len(tasks))
+            # 進捗ログ（残り件数込み）
+            remaining = total_tasks - i
+            logger.info(
+                "[score] %d/%d (remaining=%d) sid=%s q=%s",
+                i,
+                total_tasks,
+                remaining,
+                task.student_id,
+                task.question_label,
+            )
 
+            logger.debug(
+                "[score] worker started: sid=%s q=%s",
+                task.student_id,
+                task.question_label,
+            )
     # 結果を DataFrame に変換
     rows: List[Dict[str, Any]] = []
     for r in results:
@@ -173,7 +198,6 @@ def run_scoring(
             base[f"sub_{k}"] = v
 
         rows.append(base)
-
 
     if not rows:
         logger.warning("No scores generated. Check logs.")

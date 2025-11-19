@@ -5,10 +5,11 @@ from typing import Dict, Any, List
 import ast
 import logging
 
-from ..llm.ollama_client import OllamaClient
+from ..llm.base import LLMClient
 from ..llm.prompts import build_scoring_prompt
-from .rubric import QuestionRubric
 
+from .rubric import QuestionRubric
+from ..config import LLM_SCORING_MAX_TOKENS
 logger = logging.getLogger(__name__)
 
 
@@ -25,7 +26,7 @@ class ScoreResult:
 
 
 class AbsoluteScorer:
-    def __init__(self, client: OllamaClient) -> None:
+    def __init__(self, client: LLMClient) -> None:
         self.client = client
 
     def score_answer(
@@ -42,7 +43,10 @@ class AbsoluteScorer:
             max_score=question_rubric.max_score,
         )
 
-        llm_text = self.client.generate(prompt)
+        llm_text = self.client.generate(
+            prompt,
+            max_tokens=LLM_SCORING_MAX_TOKENS,
+        )
         logger.debug(
             "LLM raw response for %s %s: %s",
             student_id, question_rubric.question_label, llm_text

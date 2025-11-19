@@ -2,6 +2,7 @@
 
 # 自動採点システム 命名規約 & データフロー仕様
 
+
 ## 全体フロー概要
 
 コマンドと入出力の対応はざっくり以下：
@@ -29,7 +30,10 @@
 5. 最終レポート（成績＋AI疑惑＋個別フィードバック）
    python -m src.steam_report_grader.cli final-report
 ```
+GPU0 → http://localhost:11434
+GPU1 → http://localhost:11435
 
+"docker compose up -d"でサーバー起動
 ---
 
 ## 1. コア命名規約（カラム名）

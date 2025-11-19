@@ -1,0 +1,30 @@
+services:
+  ollama_gpu0:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              driver: nvidia
+              count: 1
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - NVIDIA_VISIBLE_DEVICES=0
+
+  ollama_gpu1:
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              driver: nvidia
+              count: 1
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - NVIDIA_VISIBLE_DEVICES=1

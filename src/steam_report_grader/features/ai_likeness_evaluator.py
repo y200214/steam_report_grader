@@ -4,14 +4,14 @@ from typing import List, Dict
 import json
 import logging
 
-from ..llm.ollama_client import OllamaClient, OllamaConfig
+from ..llm.base import LLMClient
 from ..llm.prompts import build_final_evaluation_prompt
-
+from ..config import LLM_LIKENESS_MAX_TOKENS
 logger = logging.getLogger(__name__)
 
 class AILikenessEvaluator:
-    def __init__(self, client: OllamaClient) -> None:
-        self.client = client
+    def __init__(self, client: LLMClient) -> None:
+         self.client = client
 
     def evaluate_likeness(
         self,
@@ -36,8 +36,12 @@ class AILikenessEvaluator:
         )
 
         try:
-            llm_response = self.client.generate(prompt)
+            llm_response = self.client.generate(
+                prompt,
+                max_tokens=LLM_LIKENESS_MAX_TOKENS,
+            )
             parsed = self._safe_parse_json(llm_response)
+
 
             ai_likeness_score = float(parsed.get("ai_likeness_score", 0.0))
             ai_likeness_comment = str(parsed.get("ai_likeness_comment", ""))

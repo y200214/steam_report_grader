@@ -1,4 +1,10 @@
 # src/steam_report_grader/cli.py
+import os
+
+# joblib/loky の物理コア検出が毎回警告を出すのを防ぐ
+os.environ.setdefault("LOKY_MAX_CPU_COUNT", "8")  # ← 自分のPCに合わせて変更
+
+import argparse
 from pathlib import Path
 import argparse
 from .pipelines.summary_pipeline import run_summary
@@ -16,6 +22,20 @@ from .pipelines.ai_report_pipeline import run_ai_report
 from .pipelines.final_report_pipeline import run_final_report
 from .utils.audit_logger import log_audit_record
 from .pipelines.translate_reports_pipeline import run_translate_reports
+from .pipelines.relative_features_pipeline import run_relative_features
+from .pipelines.relative_ranking_pipeline import run_relative_ranking
+
+from .config import (
+    DEFAULT_SCORING_MODEL,
+    DEFAULT_LIKENESS_MODEL,
+    DEFAULT_CLUSTER_MODEL,
+    DEFAULT_TRANSLATION_MODEL,
+    LLM_SCORING_TIMEOUT,
+    SCORING_MAX_WORKERS,
+    OLLAMA_DEFAULT_TEMPERATURE,
+    OLLAMA_DEFAULT_SEED,
+)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -70,25 +90,37 @@ def main():
         default=Path("logs/app.log"),
         help="ログファイルのパス",
     )
+
+    p_score.add_argument(
+        "--llm-provider",
+        type=str,
+        default="ollama",
+        help="LLM プロバイダ (例: ollama, openai)",
+    )
+
     p_score.add_argument(
         "--model",
         type=str,
-        default="gpt-oss:20b",
+        default=DEFAULT_SCORING_MODEL,
         help="Ollama で使うモデル名（例: gpt-oss:20b）",
     )
 
     p_score.add_argument(
         "--workers",
         type=int,
-        default=2,
+        default=SCORING_MAX_WORKERS,
         help="並列で採点するワーカー数（ThreadPoolExecutor の max_workers）",
     )
     p_score.add_argument(
         "--ollama-timeout",
         type=int,
-        default=120,
-        help="Ollamaのタイムアウト秒数（秒）",
+        default=int(LLM_SCORING_TIMEOUT),
+        help="Ollamaのタイムアウト秒数（秒、config で変更可能）",
     )
+
+
+
+
 
     p_ex = subparsers.add_parser("explain", help="採点理由を人が読みやすい形で出力する")
     p_ex.add_argument(
@@ -256,9 +288,18 @@ def main():
     p_aic.add_argument(
         "--model",
         type=str,
-        default="gpt-oss-20b",
+        default=DEFAULT_CLUSTER_MODEL,
         help="クラスタ分析に使う LLM モデル名（Ollama）",
     )
+
+    p_aic.add_argument(
+        "--llm-provider",
+        type=str,
+        default="ollama",
+        help="LLM プロバイダ (例: ollama, openai)",
+    )
+
+
     # === peer-similarity ===
     p_peer = subparsers.add_parser(
         "peer-similarity",
@@ -374,9 +415,16 @@ def main():
     p_likeness.add_argument(
         "--model",
         type=str,
-        default="gpt-oss:20b",
+        default=DEFAULT_LIKENESS_MODEL,  # ★ ここだけ config 参照
         help="AIテンプレ評価に使用するLLMモデル",
     )
+    p_likeness.add_argument(
+        "--llm-provider",
+        type=str,
+        default="ollama",
+        help="LLM プロバイダ (例: ollama, openai)",
+    )
+
     # === ai-report ===
     p_air = subparsers.add_parser(
         "ai-report",
@@ -463,14 +511,21 @@ def main():
     p_trans.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("data/outputs/excel"),
-        help="score_explanations.xlsx や ai_*_report.xlsx が置いてあるディレクトリ",
+        default=Path("data/outputs"),
+        help="score_explanations.xlsx や ai_*_report.xlsx / final_report.xlsx が置いてあるルートディレクトリ",
     )
     p_trans.add_argument(
         "--model",
         type=str,
-        default="gpt-oss:20b",
+        default=DEFAULT_TRANSLATION_MODEL,
         help="翻訳に使うモデル名（Ollama のタグ）",
+    )
+
+    p_trans.add_argument(
+        "--llm-provider",
+        type=str,
+        default="ollama",
+        help="LLM プロバイダ (例: ollama, openai)",
     )
     p_trans.add_argument(
         "--log-path",
@@ -483,6 +538,22 @@ def main():
         action="store_true",
         help="元の Excel を上書きする（デフォルトは *_ja.xlsx を新規作成）",
     )
+
+    # 圧縮特徴抽出
+    p_rf = subparsers.add_parser("relative-features", help="圧縮特徴量を抽出する（要約と引用）")
+    p_rf.add_argument("--responses", type=Path, default=Path("data/outputs/excel/steam_exam_responses.xlsx"))
+    p_rf.add_argument("--scores-csv", type=Path, default=Path("data/intermediate/features/absolute_scores.csv"))
+    p_rf.add_argument("--output-csv", type=Path, default=Path("data/intermediate/features/relative_features.csv"))
+    p_rf.add_argument("--model", type=str, default="gpt-os")  # 任意に変更
+    p_rf.add_argument("--llm-provider", type=str, default="ollama")
+    p_rf.add_argument("--log-path", type=Path, default=Path("logs/app.log"))
+
+    # 相対順位計算
+    p_rr = subparsers.add_parser("relative-ranking", help="相対スコアと順位を計算してranking.csvに追加")
+    p_rr.add_argument("--features-csv", type=Path, default=Path("data/intermediate/features/relative_features.csv"))
+    p_rr.add_argument("--scores-csv", type=Path, default=Path("data/intermediate/features/absolute_scores.csv"))
+    p_rr.add_argument("--ranking-csv", type=Path, default=Path("data/outputs/final/ranking.csv"))
+    p_rr.add_argument("--log-path", type=Path, default=Path("logs/app.log"))
 
     args = parser.parse_args()
 
@@ -503,6 +574,7 @@ def main():
             output_path=args.output_csv,
             log_path=args.log_path,
             model_name=str(args.model),
+            llm_provider=str(args.llm_provider),
             max_workers=args.workers,
             ollama_timeout=args.ollama_timeout,
         )
@@ -512,12 +584,15 @@ def main():
             args=vars(args),
             extra={
                 "llm": {
+                    "provider": args.llm_provider,
                     "model": args.model,
                     "temperature": 0.0,
                     "seed": 42,
                 }
             },
         )
+
+
     elif args.command == "summary":
         run_summary(
             absolute_scores_csv=args.scores_csv,
@@ -580,11 +655,20 @@ def main():
             output_excel=args.output_excel,
             log_path=args.log_path,
             model_name=str(args.model),
+            llm_provider=str(args.llm_provider),
         )
         log_audit_record(
             command="ai-cluster",
             args=vars(args),
-        )            
+            extra={
+                "llm": {
+                    "provider": args.llm_provider,
+                    "model": args.model,
+                }
+            },
+        )
+
+       
     elif args.command == "peer-similarity":
         run_peer_similarity(
             responses_excel=args.responses,
@@ -615,6 +699,7 @@ def main():
             output_excel=args.output_excel,
             log_path=args.log_path,
             model_name=str(args.model),
+            llm_provider=str(args.llm_provider),  # ★ 追加
             likeness_csv=args.likeness_csv,
             mode=args.mode,
             targets_csv=args.targets_csv,
@@ -625,11 +710,15 @@ def main():
             extra={
                 "llm": {
                     "model": args.model,
+                    "provider": args.llm_provider,   # ★ 追加
                     "temperature": 0.0,
                     "seed": 42,
                 }
             },
         )
+
+
+
     elif args.command == "ai-report":
         run_ai_report(
             responses_excel=args.responses,
@@ -661,19 +750,55 @@ def main():
         run_translate_reports(
             output_dir=args.output_dir,
             model_name=str(args.model),
+            llm_provider=str(args.llm_provider),
             log_path=args.log_path,
             inplace=args.inplace,
         )
+
         log_audit_record(
             command="translate-reports",
             args=vars(args),
             extra={
                 "llm": {
+                    "provider": args.llm_provider,                    
+                    "model": args.model,
+                    "temperature": OLLAMA_DEFAULT_TEMPERATURE,
+                    "seed": OLLAMA_DEFAULT_SEED,
+                }
+            },
+        )
+
+
+    elif args.command == "relative-features":
+        run_relative_features(
+            responses_excel_path=args.responses,
+            absolute_scores_csv=args.scores_csv,
+            output_path=args.output_csv,
+            model_name=args.model,
+            llm_provider=args.llm_provider,
+            log_path=args.log_path,
+        )
+        log_audit_record(
+            command="relative-features",
+            args=vars(args),
+            extra={
+                "llm": {
+                    "provider": args.llm_provider,
                     "model": args.model,
                     "temperature": 0.0,
                     "seed": 42,
                 }
-            },
+            }
         )
+
+    elif args.command == "relative-ranking":
+        run_relative_ranking(
+            features_csv=args.features_csv,
+            absolute_scores_csv=args.scores_csv,
+            ranking_csv=args.ranking_csv,
+            log_path=args.log_path,
+        )
+        log_audit_record(command="relative-ranking", args=vars(args))
+
 if __name__ == "__main__":
     main()

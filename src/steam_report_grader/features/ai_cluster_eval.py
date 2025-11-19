@@ -7,10 +7,11 @@ import logging
 
 import pandas as pd
 
-from ..llm.ollama_client import OllamaClient, OllamaConfig
+from ..llm.ollama_pool import get_ollama_client
 from ..llm.cluster_prompts import build_cluster_summary_and_ai_template_prompt
-from ..grading.rubric import load_all_rubrics
 
+from ..grading.rubric import load_all_rubrics
+from ..config import LLM_CLUSTER_TIMEOUT, LLM_CLUSTER_MAX_TOKENS
 logger = logging.getLogger(__name__)
 
 
@@ -29,13 +30,21 @@ def analyze_clusters_with_llm(
     cluster_df: pd.DataFrame,
     rubric_dir: str | None,
     model_name: str = "gpt-oss-20b",
+    llm_provider: str = "ollama",
 ) -> List[ClusterAnalysis]:
     """
     cluster_df: columns = ["student_id", "question", "cluster_id"]
-    responses_df: sheet "responses" 全体を想定
+    responses_df: sheet 'responses' 相当 (student_id, Q1..Q5 など)
     rubric_dir: Q1〜Q5 の rubric txt を置いた dir。None の場合は question_text, rubric_text を空にする。
     """
-    client = OllamaClient(OllamaConfig(model=model_name))
+    # 2GPU対応の Ollama クライアント（プール）を取得
+    client = get_ollama_client()
+    logger.info(
+        "Using cluster LLM via 2-GPU pool (requested model_name=%s, timeout=%s)",
+        model_name,
+        LLM_CLUSTER_TIMEOUT,
+    )
+
 
     questions = sorted(cluster_df["question"].unique(), key=lambda x: int(x[1:]))
 
@@ -46,16 +55,26 @@ def analyze_clusters_with_llm(
         rubrics = {}
 
     analyses: List[ClusterAnalysis] = []
+    
+    # 進捗管理用に (question, cluster_id) の組をざっくり数えておく
+    cluster_keys: List[tuple[str, int]] = []
+    for q in questions:
+        sub_cluster = cluster_df[cluster_df["question"] == q]
+        if sub_cluster.empty:
+            continue
+        for cid in sorted(sub_cluster["cluster_id"].unique()):
+            cluster_keys.append((q, int(cid)))
+    total = len(cluster_keys)
+    done = 0
 
     for q in questions:
         sub_cluster = cluster_df[cluster_df["question"] == q]
         if sub_cluster.empty:
             continue
 
-        # 回答抽出用
         # responses_df は列: student_id, Q1..Q5
         for cluster_id in sorted(sub_cluster["cluster_id"].unique()):
-            sub_c = sub_cluster[sub_cluster["cluster_id"] == cluster_id]
+            sub_c = sub_cluster[sub_cluster["question"].eq(q) & sub_cluster["cluster_id"].eq(cluster_id)]
             if sub_c.empty:
                 continue
 
@@ -63,7 +82,7 @@ def analyze_clusters_with_llm(
             sids = sub_c["student_id"].astype(str).tolist()
 
             # 回答の抽出
-            answers = []
+            answers: List[str] = []
             col_q = q  # "Q1" など
             for sid in sids:
                 row = responses_df[responses_df["student_id"] == sid]
@@ -96,23 +115,27 @@ def analyze_clusters_with_llm(
             )
 
             try:
-                llm_text = client.generate(prompt)
+                llm_text = client.generate(
+                        prompt,
+                        max_tokens=LLM_CLUSTER_MAX_TOKENS,
+                    )
                 parsed = _safe_parse_json(llm_text)
-                summary = str(parsed.get("summary", "") or "")
-                likeness = float(parsed.get("ai_template_likeness", 0.0))
-                comment = str(parsed.get("comment", "") or "")
+
+
+                ai_like = float(parsed.get("ai_template_likeness", 0.0))
+                summary = str(parsed.get("summary", ""))
+                comment = str(parsed.get("comment", ""))
 
                 analyses.append(
                     ClusterAnalysis(
                         question=q,
                         cluster_id=int(cluster_id),
-                        ai_template_likeness=likeness,
+                        ai_template_likeness=ai_like,
                         summary=summary,
                         comment=comment,
                         raw_response=llm_text,
                     )
                 )
-
             except Exception as e:
                 logger.exception(
                     "Failed to analyze cluster %s %s: %s", q, cluster_id, e
@@ -122,7 +145,21 @@ def analyze_clusters_with_llm(
 
 
 def _safe_parse_json(text: str) -> Dict[str, Any]:
+    """
+    LLM 出力から JSON オブジェクトっぽい部分を抜き出して dict にする
+    """
     text = text.strip()
+
+    # ```json ... ``` を剥がす
+    if text.startswith("```"):
+        lines = text.splitlines()
+        if len(lines) >= 2:
+            if lines[-1].strip().startswith("```"):
+                lines = lines[1:-1]
+            else:
+                lines = lines[1:]
+            text = "\n".join(lines).strip()
+
     start = text.find("{")
     end = text.rfind("}")
     if start != -1 and end != -1 and start < end:
@@ -131,7 +168,10 @@ def _safe_parse_json(text: str) -> Dict[str, Any]:
         json_str = text
 
     try:
-        return json.loads(json_str)
+        data = json.loads(json_str)
+        if isinstance(data, dict):
+            return data
     except Exception as e:
         logger.warning("Failed to parse JSON from LLM response: %s", e)
-        return {}
+
+    return {}

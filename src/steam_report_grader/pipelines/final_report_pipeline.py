@@ -126,7 +126,14 @@ def _generate_feedback_markdown_for_student(
         lines.append(f"- 順位: {rank} / {num_students}")
     else:
         lines.append(f"- 順位: {rank}")
+
+    # ← 相対順位を追記（あれば）
+    relative_rank = final_row.get("relative_rank", None)
+    if pd.notna(relative_rank):
+        lines.append(f"- 相対順位: {int(relative_rank)}位")
+
     lines.append("")
+
 
     # 設問ごとの講評
     for _, row in s_rows.iterrows():
@@ -347,6 +354,10 @@ def _write_feedback_docx(
     p.add_run(f"順位: {rank} / {n_students}\n")
     p.add_run(f"合計得点: {total:.2f}\n")
     p.add_run(f"平均得点: {mean:.2f}")
+
+    relative_rank = per_student_df["relative_rank"].iloc[0] if "relative_rank" in per_student_df.columns else None
+    if relative_rank is not None:
+        p.add_run(f"相対順位: {int(relative_rank)}\n")
 
     # 設問ごとの講評
     for _, srow in per_student_df.iterrows():
